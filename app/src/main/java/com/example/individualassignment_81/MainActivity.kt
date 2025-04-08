@@ -31,6 +31,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+//A lot of this is borrowed from example code. It worked well, so why reinvent the wheel?
+
 // 1. Entity: Represents the table in SQLite using Room
 @Entity(tableName = "tasks")
 data class Task(
@@ -185,6 +187,7 @@ fun MainScreen(viewModel: TaskViewModel) {
         Row(
 
         ){
+            //button to turn off filter and show all tasks
             Button(
                 modifier = Modifier.weight(1f).defaultMinSize(minHeight = 75.dp),
                 shape = RoundedCornerShape(0.dp),
@@ -196,6 +199,7 @@ fun MainScreen(viewModel: TaskViewModel) {
                 Text(text = "All Tasks",
                     fontSize = 15.sp)
             }
+            //button to filter for pending tasks
             Button(
                 modifier = Modifier.weight(1f).defaultMinSize(minHeight = 75.dp),
                 shape = RoundedCornerShape(0.dp),
@@ -207,6 +211,7 @@ fun MainScreen(viewModel: TaskViewModel) {
                 Text(text = "Pending Tasks",
                     fontSize = 15.sp)
             }
+            //button to filter for finished tasks
             Button(
                 modifier = Modifier.weight(1f).defaultMinSize(minHeight = 75.dp),
                 shape = RoundedCornerShape(0.dp),
@@ -221,11 +226,11 @@ fun MainScreen(viewModel: TaskViewModel) {
         }
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Separate input and list
-        // Scrollable list of users using LazyColumn
+        // Scrollable list of tasks using LazyColumn
         LazyColumn {
             items(users) { task ->
-                var updatedDescription by remember(task.id) { mutableStateOf(task.description) } // Editable name
-                var updatedCompletion by remember(task.id) { mutableStateOf(task.done) } // Editable age
+                var updatedDescription by remember(task.id) { mutableStateOf(task.description) } // Editable description
+                var updatedCompletion by remember(task.id) { mutableStateOf(task.done) } // Editable completion status
 
                 Row(
                     modifier = Modifier
@@ -260,15 +265,15 @@ fun MainScreen(viewModel: TaskViewModel) {
                     }
 
                     Column(Modifier.weight(1f)) {
-                        // Editable name field
+                        // Editable description field
                         OutlinedTextField(
                             value = updatedDescription,
                             onValueChange = { updatedDescription = it },
-                            label = { Text("Edit Name") },
+                            label = { Text("Edit Description") },
                             singleLine = true
                         )
 
-                        // Display update indicator if this user was just updated
+                        // Display update indicator if this task was just updated
                         if (task.id == lastUpdatedId) {
                             Text("Updated!", color = MaterialTheme.colorScheme.primary)
                         }
@@ -292,7 +297,7 @@ fun MainScreen(viewModel: TaskViewModel) {
 
                         Spacer(Modifier.height(4.dp))
 
-                        // Delete user button
+                        // Delete task button
                         Button(onClick = { viewModel.deleteTask(task) }) {
                             Text("Delete")
                         }
